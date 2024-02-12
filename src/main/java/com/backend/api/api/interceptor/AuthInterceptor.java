@@ -1,6 +1,7 @@
 package com.backend.api.api.interceptor;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.backend.api.api.Exception.JwtException;
 import com.backend.api.api.model.User;
 import com.backend.api.api.util.JwtUtil;
@@ -31,6 +32,8 @@ public class AuthInterceptor implements HandlerInterceptor {
             User user = jwt.validateTokenAndRetrieveSubject(token);
             request.setAttribute("user", user);
             return true;
+        } catch (TokenExpiredException e ) {
+            throw  new JwtException("Jwt token expired login again");
         } catch (JWTVerificationException e) {
             String message = e.getMessage() != null ? e.getMessage() : "token expired or invalid token login again";
             throw  new JwtException(message);
